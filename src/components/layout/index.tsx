@@ -3,30 +3,17 @@
 import React, { ReactNode } from "react";
 import PrivateLayout from "./Private";
 import PublicLayout from "./Public";
-import { useRecoilState } from "recoil";
-import { useRouter } from "next/navigation";
-import authState from "@/recoils/authState";
-import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 interface UserLayoutProps {
   children: ReactNode;
 }
 
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
-  const [isAuthenticated] = useRecoilState(authState);
-  const router = useRouter();
+  const router = usePathname();
+  const privatePaths = ["/dashboard", "/type"];
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (isAuthenticated) {
-        router.push("/dashboard");
-      } else {
-        router.push("/login");
-      }
-    }
-  }, [isAuthenticated, router]);
-
-  const Layout = isAuthenticated ? PrivateLayout : PublicLayout;
+  const Layout = privatePaths.includes(router) ? PrivateLayout : PublicLayout;
 
   return <Layout>{children}</Layout>;
 };

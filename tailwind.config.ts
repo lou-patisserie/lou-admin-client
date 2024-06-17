@@ -1,15 +1,22 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1081px",
+      xl: "1280px",
+      "2xl": "1440px",
+    },
     container: {
       center: true,
       padding: "2rem",
@@ -18,7 +25,19 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-geist-sans)"],
+      },
       colors: {
+        luoBlack: "#000000",
+        luoBiege: "#F0E8DD",
+        luoDarkBiege: "#8B7158",
+        luoSilver: "#C0C0C0",
+        brown: {
+          light: "#FED8B1",
+          DEFAULT: "#8B4513",
+          dark: "#5C4033",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -72,9 +91,23 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      transitionProperty: {
+        height: "height",
+        spacing: "margin, padding",
+      },
+      transitionTimingFunction: {
+        "ease-out-expo": "cubic-bezier(0.19, 1, 0.22, 1)",
+      },
+    },
+  },
+  variants: {
+    extend: {
+      opacity: ["group-hover"],
+      transform: ["group-hover"],
+      translate: ["group-hover"],
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;

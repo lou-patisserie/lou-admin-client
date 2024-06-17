@@ -1,10 +1,10 @@
 import { atom } from "recoil";
 
 const userState = atom({
-  key: "userState",
+  key: "user",
   default: {
-    id: null as string | null,
-    name: null as string | null,
+    ID: "",
+    username: "",
   },
 });
 

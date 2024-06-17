@@ -8,11 +8,11 @@ interface PrivateLayoutProps {
 
 const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col overflow-x-hidden w-screen">
       <Navbar />
-      {children}
+      <main className="flex-grow">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 };
 

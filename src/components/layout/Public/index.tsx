@@ -8,10 +8,10 @@ interface PublicLayoutProps {
 
 const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
-    <>
-      {children}
+    <div className="min-h-screen flex flex-col overflow-x-hidden w-screen">
+      <main className="flex-grow">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 };
 
