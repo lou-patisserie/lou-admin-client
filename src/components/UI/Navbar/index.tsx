@@ -10,6 +10,15 @@ import { useRecoilState } from "recoil";
 import userState from "@/recoils/userState";
 import { adminProfile } from "@/api/auth-api";
 import useAuthChecker from "@/lib/useAuthChecker";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../Dropdown";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   useAuthChecker();
@@ -32,6 +41,13 @@ const Navbar = () => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  const router = useRouter();
+
+  const handleLogOut = () => {
+    sessionStorage.removeItem("admin-token");
+    router.push("/login");
+  };
 
   const handleLinkClick = () => {
     drawerCloseRef.current?.click();
@@ -59,17 +75,41 @@ const Navbar = () => {
             >
               <p className="font-semibold text-luoDarkBiege">Manage Product Type</p>
             </Link>
+            <Link
+              href={"/add-ons"}
+              className="w-11/12 py-1 text-center rounded-xl hover:bg-brown-light transition duration-500"
+              onClick={handleLinkClick}
+            >
+              <p className="font-semibold text-luoDarkBiege">Manage Add-ons</p>
+            </Link>
           </div>
         </DrawerContent>
         <DrawerClose ref={drawerCloseRef} className="hidden" />
       </Drawer>
-      <Button
-        className="bg-transparent hover:bg-brown-light hover:text-luoDarkBiege flex gap-1"
-        size="sm"
-      >
-        <CircleUserRound />
-        {user.username}
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            className="bg-transparent hover:bg-brown-light hover:text-luoDarkBiege flex gap-1"
+            size="sm"
+          >
+            <CircleUserRound />
+            {user.username}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem className="text-center px-2 py-1 hover:bg-brown-light transition duration-500">
+            <Link href={"/account"} onClick={handleLinkClick}>
+              <p className="font-semibold text-luoDarkBiege">Account Setting</p>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleLogOut}
+            className="text-center px-2 py-1 hover:bg-brown-light transition duration-500"
+          >
+            <p className="font-semibold text-luoDarkBiege">Log out</p>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

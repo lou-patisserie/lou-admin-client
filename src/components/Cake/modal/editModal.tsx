@@ -25,7 +25,7 @@ const EditModal = ({ open, setOpen, cakeId, refetch }: EditModalProps) => {
         <DialogContent className={"max-w-fit overflow-y-auto max-h-screen overflow-x-hidden"}>
           <DialogHeader className="max-w-[86vw] flex flex-row justify-between">
             <div>
-              <DialogTitle className="text-left">Add New Cake Form</DialogTitle>
+              <DialogTitle className="text-left">Edit Cake Form</DialogTitle>
               <DialogDescription className="text-left">Fill all required form.</DialogDescription>
             </div>
             <X className="h-4 w-4 cursor-pointer" onClick={() => setOpen(false)} />

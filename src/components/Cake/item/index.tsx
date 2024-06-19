@@ -6,6 +6,7 @@ import DeleteModal from "../modal/deleteModal";
 import { deleteCake } from "@/api/cakes-api";
 import { Button } from "@/components/UI/Button";
 import EditModal from "../modal/editModal";
+import SpinnerWithText from "@/components/UI/Spinner";
 
 interface CakeItemsProps {
   cake: Cakes;
@@ -31,12 +32,14 @@ export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeIte
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [deleting, setIsDeleting] = useState(false);
 
   const adminTokenString =
     typeof window !== "undefined" ? sessionStorage.getItem("admin-token") : null;
   const adminToken = adminTokenString ? JSON.parse(adminTokenString) : null;
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
       const response = await deleteCake(adminToken.token, cake.ID);
       if (response.success) {
@@ -44,19 +47,26 @@ export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeIte
         setTimeout(() => {
           const updatedCakes = cakes.filter(c => c.ID !== cake.ID);
           updateCakes(updatedCakes);
+          setIsDeleting(false);
         }, 500);
       }
     } catch (error) {
+      setIsDeleting(false);
       console.error("Failed to delete fish:", error);
     }
   };
 
   return (
     <div
-      className={`transition-opacity duration-500 ease-out-expo ${
+      className={`relative transition-opacity duration-500 ease-out-expo ${
         !isVisible ? "opacity-0 -translate-y-2" : ""
       }`}
     >
+      {deleting && (
+        <div className="absolute inset-0 bg-luoBiege bg-opacity-50 flex justify-center items-center z-10">
+          <SpinnerWithText text="Deleting..." />
+        </div>
+      )}
       <div className={`flex gap-2 items-start`}>
         <div className="h-40 w-40 pt-2">
           <Image

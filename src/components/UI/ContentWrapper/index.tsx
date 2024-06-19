@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import SpinnerWithText from "../Spinner";
 
 interface ContentWrapperProps {
   children: ReactNode;
@@ -7,13 +8,10 @@ interface ContentWrapperProps {
 
 const ContentWrapper = ({ children, loading }: ContentWrapperProps) => {
   return (
-    <div className="bg-white mb-10 py-4 px-6 rounded-lg">
+    <div className="bg-white mb-10 py-4 px-6 rounded-lg min-h-[300px]">
       {loading ? (
-        <div className="flex flex-row items-center justify-center">
-          <span className="loading loading-bars loading-xs"></span>
-          <span className="loading loading-bars loading-sm"></span>
-          <span className="loading loading-bars loading-md"></span>
-          <span className="loading loading-bars loading-lg"></span>
+        <div className="w-full h-[300px] flex items-center justify-center">
+          <SpinnerWithText text="Loading..." />
         </div>
       ) : (
         children

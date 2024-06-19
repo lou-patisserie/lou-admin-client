@@ -3,7 +3,7 @@
 import React, { ReactNode } from "react";
 import PrivateLayout from "./Private";
 import PublicLayout from "./Public";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface UserLayoutProps {
   children: ReactNode;
