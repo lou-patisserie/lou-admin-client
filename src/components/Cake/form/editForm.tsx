@@ -548,6 +548,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         defaultValue={cake?.variants[1].desc}
                         {...field}
                         className="max-w-[70%] sm:max-w-full"
+                        disabled={isDisabled}
                       />
                     </FormControl>
                     <FormMessage />
@@ -565,6 +566,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         defaultValue={cake?.variants[0].price}
                         {...field}
                         className="max-w-[70%] sm:max-w-full"
+                        disabled={isDisabled}
                       />
                     </FormControl>
                     <FormMessage />
@@ -791,7 +793,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
             )}
             {step === 3 && (
               <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
-                Add Cake
+                Update Cake
               </LoadingButton>
             )}
           </div>
