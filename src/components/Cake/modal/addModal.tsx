@@ -22,7 +22,9 @@ const AddModal = ({ open, setOpen, cakes, refetch }: AddModalProps) => {
   return (
     <div className="max-w-[400px]">
       <Dialog open={open}>
-        <DialogContent className={"max-w-fit overflow-y-auto max-h-screen overflow-x-hidden"}>
+        <DialogContent
+          className={"max-w-fit overflow-y-auto max-h-screen overflow-x-hidden md:max-w-md"}
+        >
           <DialogHeader className="max-w-[86vw] flex flex-row justify-between">
             <div>
               <DialogTitle className="text-left">Add New Cake Form</DialogTitle>
