@@ -42,3 +42,8 @@ export type AddCakeParams = {
   ingredients_desc: string;
   storage_serving_desc: string;
 };
+
+export type ProductTypesParams = {
+  name: string;
+  desc: string;
+};

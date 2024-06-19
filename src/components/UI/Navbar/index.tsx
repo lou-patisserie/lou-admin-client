@@ -69,7 +69,7 @@ const Navbar = () => {
               <p className="font-semibold text-luoDarkBiege">Manage Cakes</p>
             </Link>
             <Link
-              href={"/type"}
+              href={"/product-type"}
               className="w-11/12 py-1 text-center rounded-xl hover:bg-brown-light transition duration-500"
               onClick={handleLinkClick}
             >

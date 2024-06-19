@@ -29,6 +29,7 @@ import { app } from "@/lib/firebase";
 import { Button } from "@/components/UI/Button";
 import { firstStepSchema, formSchema, secondStepSchema, thirdStepSchema } from "./schemas";
 import RichText from "@/components/UI/RichText";
+import SpinnerWithText from "@/components/UI/Spinner";
 
 interface EditCakeProps {
   setOpen: (open: boolean) => void;
@@ -48,10 +49,13 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
   const [image1, setImage1] = useState("");
   const [image2, setImage2] = useState("");
   const [image3, setImage3] = useState("");
+  const [uploading1, setUploading1] = useState(false);
+  const [uploading2, setUploading2] = useState(false);
+  const [uploading3, setUploading3] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [step, setStep] = useState(1);
   const [user] = useRecoilState(userState);
   const { toast } = useToast();
@@ -79,12 +83,15 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
   });
 
   const fetchCake = useCallback(async () => {
+    setFetching(true);
     try {
       const response = await getCakebyId(cakeId);
       if (response.success) {
+        setFetching(false);
         setCake(response.data);
       }
     } catch (error) {
+      setFetching(false);
       console.error(error);
     }
   }, [cakeId]);
@@ -192,6 +199,14 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
       return;
     }
 
+    const setUploading =
+      e.target.name === "main_image"
+        ? setUploading1
+        : e.target.name === "sub_image1"
+        ? setUploading2
+        : setUploading3;
+    setUploading(true);
+
     const reader = new FileReader();
     reader.onload = event => {
       const img = new window.Image();
@@ -227,6 +242,8 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
             }
           } catch (error) {
             console.error("Error uploading file:", error);
+          } finally {
+            setUploading(false);
           }
         }, "image/webp");
       };
@@ -290,53 +307,194 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
   const handleSubmit = form.handleSubmit(onSubmit);
 
   return (
-    <div className="max-w-fit">
-      <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-2">
-          {step === 1 && (
-            <>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.cake.name}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex flex-col justify-between md:flex-row">
+    <div className="max-w-md">
+      {fetching ? (
+        <div className="min-w-[325px] min-h-[600px] flex justify-center items-center">
+          <SpinnerWithText text="Loading..." />
+        </div>
+      ) : (
+        <Form {...form}>
+          <form onSubmit={handleSubmit} className="space-y-2">
+            {step === 1 && (
+              <>
                 <FormField
                   control={form.control}
-                  name="product_type_id"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Product Type</FormLabel>
+                      <FormLabel className="font-bold">Name</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder={cake?.cake.ProductType.name}>
-                              {cake?.cake.ProductType.name || "Select a type"}
-                            </SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Types</SelectLabel>
-                              {types.map(type => (
-                                <SelectItem key={type.ID} value={type.ID}>
-                                  {type.name}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
+                        <Input defaultValue={cake?.cake.name} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-col justify-between sm:flex-row">
+                  <FormField
+                    control={form.control}
+                    name="product_type_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">Product Type</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue placeholder={cake?.cake.ProductType.name}>
+                                {cake?.cake.ProductType.name || "Select a type"}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Types</SelectLabel>
+                                {types.map(type => (
+                                  <SelectItem key={type.ID} value={type.ID}>
+                                    {type.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="is_best_seller"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">Best Seller</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue>{cake?.cake.is_best_seller ? "Yes" : "No"}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select one</SelectLabel>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col justify-between sm:flex-row">
+                  <FormField
+                    control={form.control}
+                    name="is_new_arrival"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">New Arrival</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue>{cake?.cake.is_new_arrival ? "Yes" : "No"}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select one</SelectLabel>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="is_fruit_based"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">Fruit Based</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue>{cake?.cake.is_fruit_based ? "Yes" : "No"}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select one</SelectLabel>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col justify-between sm:flex-row">
+                  <FormField
+                    control={form.control}
+                    name="is_nut_free"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">Nut Free</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue>{cake?.cake.is_nut_free ? "Yes" : "No"}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select one</SelectLabel>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="is_chocolate_based"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-bold">Chocolate Based</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="sm:w-[180px]">
+                              <SelectValue>
+                                {cake?.cake.is_chocolate_based ? "Yes" : "No"}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select one</SelectLabel>
+                                <SelectItem value="true">Yes</SelectItem>
+                                <SelectItem value="false">No</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="variant_name_1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Variant name 1</FormLabel>
+                      <FormControl>
+                        <Input defaultValue={cake?.variants[0].name} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -344,49 +502,12 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="is_best_seller"
+                  name="variant_desc_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Best Seller</FormLabel>
+                      <FormLabel className="font-bold">Variant desc 1</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue>{cake?.cake.is_best_seller ? "Yes" : "No"}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Select one</SelectLabel>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex flex-col justify-between md:flex-row">
-                <FormField
-                  control={form.control}
-                  name="is_new_arrival"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-bold">New Arrival</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue>{cake?.cake.is_new_arrival ? "Yes" : "No"}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Select one</SelectLabel>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
+                        <Input defaultValue={cake?.variants[0].desc} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -394,49 +515,12 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="is_fruit_based"
+                  name="variant_price_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Fruit Based</FormLabel>
+                      <FormLabel className="font-bold">Variant price 1</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue>{cake?.cake.is_fruit_based ? "Yes" : "No"}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Select one</SelectLabel>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex flex-col justify-between md:flex-row">
-                <FormField
-                  control={form.control}
-                  name="is_nut_free"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-bold">Nut Free</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue>{cake?.cake.is_nut_free ? "Yes" : "No"}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Select one</SelectLabel>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
+                        <Input defaultValue={cake?.variants[0].price} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -444,237 +528,148 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="is_chocolate_based"
+                  name="variant_name_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Chocolate Based</FormLabel>
+                      <FormLabel className="font-bold">Variant name 2 (optional)</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue>
-                              {cake?.cake.is_chocolate_based ? "Yes" : "No"}
-                            </SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Select one</SelectLabel>
-                              <SelectItem value="true">Yes</SelectItem>
-                              <SelectItem value="false">No</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
+                        <Input defaultValue={cake?.variants[1].name} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-              <FormField
-                control={form.control}
-                name="variant_name_1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant name 1</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[0].name}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="variant_desc_1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant desc 1</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[0].desc}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="variant_price_1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant price 1</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[0].price}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="variant_name_2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant name 2 (optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[1].name}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="variant_desc_2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant desc 2 (optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[1].desc}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                        disabled={isDisabled}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="variant_price_2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.variants[0].price}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                        disabled={isDisabled}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
-          {step === 2 && (
-            <>
-              <FormField
-                control={form.control}
-                name="allergen_desc"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Allergen description</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.aboutCake.allergen}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ingredients_desc"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Ingredients Desc</FormLabel>
-                    <FormControl>
-                      <Input
-                        defaultValue={cake?.aboutCake.ingredients}
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="about_cake_desc"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">About cake description</FormLabel>
-                    <FormControl>
-                      <Controller
-                        name="about_cake_desc"
-                        control={form.control}
-                        render={({ field }) => (
-                          <RichText value={field.value} onChange={field.onChange} />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="storage_serving_desc"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Storage serving description</FormLabel>
-                    <FormControl>
-                      <Controller
-                        name="storage_serving_desc"
-                        control={form.control}
-                        render={({ field }) => (
-                          <RichText value={field.value} onChange={field.onChange} />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
-          {step === 3 && (
-            <>
-              <FormField
-                control={form.control}
-                name="main_image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Main Image</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center gap-4 w-full">
-                        {field.value && cake ? (
-                          <Image
-                            src={image1 || cake.cake.main_image}
-                            className="aspect-square object-cover rounded-lg bg-gray-300"
-                            alt="Uploaded"
-                            width={120}
-                            height={120}
-                          />
-                        ) : (
-                          <ImagePlus width={100} height={100} />
-                        )}
-                        <div>
-                          <label htmlFor="main_image"></label>
-                          <div className="flex flex-col">
+                <FormField
+                  control={form.control}
+                  name="variant_desc_2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Variant desc 2 (optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          defaultValue={cake?.variants[1].desc}
+                          {...field}
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="variant_price_2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          defaultValue={cake?.variants[0].price}
+                          {...field}
+                          disabled={isDisabled}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {step === 2 && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="allergen_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Allergen description</FormLabel>
+                      <FormControl>
+                        <Input defaultValue={cake?.aboutCake.allergen} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ingredients_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Ingredients Desc</FormLabel>
+                      <FormControl>
+                        <Input defaultValue={cake?.aboutCake.ingredients} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="about_cake_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">About cake description</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="about_cake_desc"
+                          control={form.control}
+                          render={({ field }) => (
+                            <RichText value={field.value} onChange={field.onChange} />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="storage_serving_desc"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Storage serving description</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="storage_serving_desc"
+                          control={form.control}
+                          render={({ field }) => (
+                            <RichText value={field.value} onChange={field.onChange} />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {step === 3 && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="main_image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Main Image</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center gap-6 w-full relative">
+                          {uploading1 ? (
+                            <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                              <SpinnerWithText text="Uploading" />
+                            </div>
+                          ) : field.value && cake ? (
+                            <Image
+                              src={image1 || cake.cake.main_image}
+                              className="aspect-square object-cover rounded-lg bg-gray-300"
+                              alt="cake image 1"
+                              width={120}
+                              height={120}
+                            />
+                          ) : (
+                            <ImagePlus width={100} height={100} />
+                          )}
+                          <div>
+                            <label htmlFor="main_image"></label>
                             <input
                               id="main_image"
                               name="main_image"
@@ -686,59 +681,65 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                             )}
                           </div>
                         </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="sub_image1"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Sub Image 1</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center gap-4 w-full">
-                        {field.value && cake ? (
-                          <Image
-                            src={image2 || cake.cake.sub_image1}
-                            className="aspect-square object-cover rounded-lg bg-gray-300"
-                            alt="cake image 2"
-                            width={120}
-                            height={120}
-                          />
-                        ) : (
-                          <ImagePlus width={100} height={100} />
-                        )}
-                        <div>
-                          <label htmlFor="sub_image1"></label>
-                          <input
-                            id="sub_image1"
-                            name="sub_image1"
-                            type="file"
-                            onChange={handleFileChange}
-                          />
-                          {formErrors.main_image && (
-                            <p className="text-red-500">{formErrors.sub_image1}</p>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sub_image1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Sub Image 1</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center gap-6 w-full relative">
+                          {uploading2 ? (
+                            <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                              <SpinnerWithText text="Uploading" />
+                            </div>
+                          ) : field.value && cake ? (
+                            <Image
+                              src={image2 || cake.cake.sub_image1}
+                              className="aspect-square object-cover rounded-lg bg-gray-300"
+                              alt="cake image 2"
+                              width={120}
+                              height={120}
+                            />
+                          ) : (
+                            <ImagePlus width={100} height={100} />
                           )}
+                          <div>
+                            <label htmlFor="sub_image1"></label>
+                            <input
+                              id="sub_image1"
+                              name="sub_image1"
+                              type="file"
+                              onChange={handleFileChange}
+                            />
+                            {formErrors.sub_image1 && (
+                              <p className="text-red-500">{formErrors.sub_image1}</p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="sub_image2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold">Sub Image 2</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center gap-4 w-full">
-                        {field.value && cake ? (
-                          <>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="sub_image2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-bold">Sub Image 2</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center gap-6 w-full relative">
+                          {uploading3 ? (
+                            <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                              <SpinnerWithText text="Uploading" />
+                            </div>
+                          ) : field.value && cake ? (
                             <Image
                               src={image3 || cake.cake.sub_image2}
                               className="aspect-square object-cover rounded-lg bg-gray-300"
@@ -746,59 +747,59 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                               width={120}
                               height={120}
                             />
-                          </>
-                        ) : (
-                          <ImagePlus width={100} height={100} />
-                        )}
-                        <div>
-                          <label htmlFor="sub_image2"></label>
-                          <input
-                            id="sub_image2"
-                            name="sub_image2"
-                            type="file"
-                            onChange={handleFileChange}
-                          />
-                          {formErrors.main_image && (
-                            <p className="text-red-500">{formErrors.sub_image2}</p>
+                          ) : (
+                            <ImagePlus width={100} height={100} />
                           )}
+                          <div>
+                            <label htmlFor="sub_image2"></label>
+                            <input
+                              id="sub_image2"
+                              name="sub_image2"
+                              type="file"
+                              onChange={handleFileChange}
+                            />
+                            {formErrors.sub_image2 && (
+                              <p className="text-red-500">{formErrors.sub_image2}</p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
-          )}
-          <div className="flex gap-2 min-w-fit justify-center sm:justify-end">
-            {step > 1 && (
-              <Button
-                onClick={handleBack}
-                variant="outline"
-                className="border-luoDarkBiege text-luoDarkBiege"
-                type="button"
-              >
-                Back
-              </Button>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
-            {step < 3 && (
-              <Button
-                onClick={handleNext}
-                variant="outline"
-                className="border-luoDarkBiege text-luoDarkBiege"
-                type="button"
-              >
-                Next
-              </Button>
-            )}
-            {step === 3 && (
-              <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
-                Update Cake
-              </LoadingButton>
-            )}
-          </div>
-        </form>
-      </Form>
+            <div className="flex gap-2 min-w-fit justify-end">
+              {step > 1 && (
+                <Button
+                  onClick={handleBack}
+                  variant="outline"
+                  className="border-luoDarkBiege text-luoDarkBiege"
+                  type="button"
+                >
+                  Back
+                </Button>
+              )}
+              {step < 3 && (
+                <Button
+                  onClick={handleNext}
+                  variant="outline"
+                  className="border-luoDarkBiege text-luoDarkBiege"
+                  type="button"
+                >
+                  Next
+                </Button>
+              )}
+              {step === 3 && (
+                <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
+                  Update Cake
+                </LoadingButton>
+              )}
+            </div>
+          </form>
+        </Form>
+      )}
     </div>
   );
 };
