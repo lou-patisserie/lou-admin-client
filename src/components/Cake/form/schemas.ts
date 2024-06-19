@@ -2,24 +2,24 @@ import { z } from "zod";
 
 export const firstStepSchema = z.object({
   product_type_id: z.string().min(1, { message: "product type required" }),
-  name: z.string().min(1, { message: "name required" }),
+  name: z.string().trim().min(1, { message: "name required" }),
   is_best_seller: z.string().min(1, { message: "Best seller required" }),
   is_new_arrival: z.string().min(1, { message: "New arrival required" }),
   is_fruit_based: z.string().min(1, { message: "Fruit based required" }),
   is_nut_free: z.string().min(1, { message: "Nut free required" }),
   is_chocolate_based: z.string().min(1, { message: "Chocolate based required" }),
-  variant_name_1: z.string().min(1, { message: "variant name 1 required" }),
-  variant_desc_1: z.string().min(1, { message: "variant desc 1 required" }),
-  variant_price_1: z.string().min(1, { message: "variant price 1 required" }),
-  variant_name_2: z.string(),
-  variant_desc_2: z.string(),
-  variant_price_2: z.string(),
+  variant_name_1: z.string().trim().min(1, { message: "variant name 1 required" }),
+  variant_desc_1: z.string().trim().min(1, { message: "variant desc 1 required" }),
+  variant_price_1: z.string().trim().min(1, { message: "variant price 1 required" }),
+  variant_name_2: z.string().trim(),
+  variant_desc_2: z.string().trim(),
+  variant_price_2: z.string().trim(),
 });
 
 export const secondStepSchema = z.object({
   about_cake_desc: z.string().min(1, { message: "about cake desc required" }),
-  allergen_desc: z.string().min(1, { message: "allergen desc required" }),
-  ingredients_desc: z.string().min(1, { message: "ingredients desc required" }),
+  allergen_desc: z.string().trim().min(1, { message: "allergen desc required" }),
+  ingredients_desc: z.string().trim().min(1, { message: "ingredients desc required" }),
   storage_serving_desc: z.string().min(1, { message: "storage serving desc required" }),
 });
 
