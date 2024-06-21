@@ -29,6 +29,7 @@ import { app } from "@/lib/firebase";
 import { Button } from "@/components/UI/Button";
 import { formSchema, firstStepSchema, secondStepSchema, thirdStepSchema } from "./schemas";
 import RichText from "@/components/UI/RichText";
+import SpinnerWithText from "@/components/UI/Spinner";
 interface AddCakeProps {
   setOpen: (open: boolean) => void;
   refetch: () => void;
@@ -48,7 +49,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isLoading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
+  const [uploading1, setUploading1] = useState(false);
+  const [uploading2, setUploading2] = useState(false);
+  const [uploading3, setUploading3] = useState(false);
   const [step, setStep] = useState(1);
   const [user] = useRecoilState(userState);
   const { toast } = useToast();
@@ -147,6 +150,14 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
       return;
     }
 
+    const setUploading =
+      e.target.name === "main_image"
+        ? setUploading1
+        : e.target.name === "sub_image1"
+        ? setUploading2
+        : setUploading3;
+    setUploading(true);
+
     const reader = new FileReader();
     reader.onload = event => {
       const img = new window.Image();
@@ -182,6 +193,8 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
             }
           } catch (error) {
             console.error("Error uploading file:", error);
+          } finally {
+            setUploading(false);
           }
         }, "image/webp");
       };
@@ -245,7 +258,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
   const handleSubmit = form.handleSubmit(onSubmit);
 
   return (
-    <div className="max-w-fit md:max-w-md">
+    <div className="md:max-w-md">
       <Form {...form}>
         <form onSubmit={handleSubmit} className="space-y-2">
           {step === 1 && (
@@ -257,13 +270,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Name</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col md:gap-4 md:flex-row">
+              <div className="flex flex-col justify-between sm:flex-row">
                 <FormField
                   control={form.control}
                   name="product_type_id"
@@ -272,7 +285,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">Product Type</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select a type" />
                           </SelectTrigger>
                           <SelectContent>
@@ -299,7 +312,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">Best Seller</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -316,7 +329,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   )}
                 />
               </div>
-              <div className="flex flex-col md:gap-4 md:flex-row">
+              <div className="flex flex-col justify-between sm:flex-row">
                 <FormField
                   control={form.control}
                   name="is_new_arrival"
@@ -325,7 +338,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">New Arrival</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -349,7 +362,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">Fruit Based</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -366,7 +379,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   )}
                 />
               </div>
-              <div className="flex flex-col md:gap-4 md:flex-row ">
+              <div className="flex flex-col justify-between sm:flex-row">
                 <FormField
                   control={form.control}
                   name="is_nut_free"
@@ -375,7 +388,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">Nut Free</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -399,7 +412,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <FormLabel className="font-bold">Chocolate Based</FormLabel>
                       <FormControl>
                         <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="w-[180px]">
+                          <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -423,7 +436,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant name 1</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -436,7 +449,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant desc 1</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -449,7 +462,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant price 1</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -462,7 +475,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant name 2 (optional)</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -475,11 +488,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant desc 2 (optional)</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                        disabled={isDisabled}
-                      />
+                      <Input {...field} disabled={isDisabled} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -492,11 +501,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="max-w-[70%] sm:max-w-full"
-                        disabled={isDisabled}
-                      />
+                      <Input {...field} disabled={isDisabled} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -513,7 +518,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Allergen description</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -526,7 +531,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Ingredients Desc</FormLabel>
                     <FormControl>
-                      <Input {...field} className="max-w-[70%] sm:max-w-full" />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -581,12 +586,16 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Main Image</FormLabel>
                     <FormControl>
-                      <div className="flex items-center gap-6 w-full">
-                        {image1 ? (
+                      <div className="flex items-center gap-6 w-full relative">
+                        {uploading1 ? (
+                          <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                            <SpinnerWithText text="Uploading" />
+                          </div>
+                        ) : image1 ? (
                           <Image
                             src={image1}
                             className="aspect-square object-cover rounded-lg bg-gray-300"
-                            alt="Uploaded"
+                            alt="cake image 1"
                             width={120}
                             height={120}
                           />
@@ -619,8 +628,12 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Sub Image 1</FormLabel>
                     <FormControl>
-                      <div className="flex items-center gap-6 w-full">
-                        {image2 ? (
+                      <div className="flex items-center gap-6 w-full relative">
+                        {uploading2 ? (
+                          <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                            <SpinnerWithText text="Uploading" />
+                          </div>
+                        ) : image2 ? (
                           <Image
                             src={image2}
                             className="aspect-square object-cover rounded-lg bg-gray-300"
@@ -640,7 +653,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             onChange={handleFileChange}
                             className="max-w-[220px]"
                           />
-                          {formErrors.main_image && (
+                          {formErrors.sub_image1 && (
                             <p className="text-red-500">{formErrors.sub_image1}</p>
                           )}
                         </div>
@@ -657,17 +670,19 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Sub Image 2</FormLabel>
                     <FormControl>
-                      <div className="flex items-center gap-6 w-full">
-                        {image3 ? (
-                          <>
-                            <Image
-                              src={image3}
-                              className="aspect-square object-cover rounded-lg bg-gray-300"
-                              alt="cake image 3"
-                              width={120}
-                              height={120}
-                            />
-                          </>
+                      <div className="flex items-center gap-6 w-full relative">
+                        {uploading3 ? (
+                          <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300 flex items-center justify-center">
+                            <SpinnerWithText text="Uploading" />
+                          </div>
+                        ) : image3 ? (
+                          <Image
+                            src={image3}
+                            className="aspect-square object-cover rounded-lg bg-gray-300"
+                            alt="cake image 3"
+                            width={120}
+                            height={120}
+                          />
                         ) : (
                           <ImagePlus width={100} height={100} />
                         )}
@@ -680,7 +695,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             onChange={handleFileChange}
                             className="max-w-[220px]"
                           />
-                          {formErrors.main_image && (
+                          {formErrors.sub_image2 && (
                             <p className="text-red-500">{formErrors.sub_image2}</p>
                           )}
                         </div>
@@ -692,7 +707,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
               />
             </>
           )}
-          <div className="flex gap-2 min-w-fit justify-center sm:justify-end">
+          <div className="flex gap-2 min-w-fit justify-end">
             {step > 1 && (
               <Button
                 onClick={handleBack}

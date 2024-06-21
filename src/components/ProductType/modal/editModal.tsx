@@ -8,33 +8,32 @@ import {
   DialogTitle,
 } from "@/components/UI/Dialog";
 import { X } from "lucide-react";
-import { CakeById } from "@/types/data-types";
-import EditCakeForm from "../form/editForm";
+import EditProductTypeForm from "../form/editForm";
 
 interface EditModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  cakeId: string;
+  typeId: string;
   refetch: () => void;
 }
 
-const EditModal = ({ open, setOpen, cakeId, refetch }: EditModalProps) => {
+const EditModal = ({ open, setOpen, typeId, refetch }: EditModalProps) => {
   return (
     <div className="max-w-fit">
       <Dialog open={open}>
         <DialogContent
           className={
-            "max-w-md rounded-md overflow-y-auto max-h-screen overflow-x-hidden md:max-w-md"
+            "max-w-sm rounded-md overflow-y-auto max-h-screen overflow-x-hidden md:max-w-md"
           }
         >
           <DialogHeader className="max-w-[86vw] flex flex-row justify-between">
             <div>
-              <DialogTitle className="text-left">Edit Cake Form</DialogTitle>
+              <DialogTitle className="text-left">Edit Product Type Form</DialogTitle>
               <DialogDescription className="text-left">Fill all required form.</DialogDescription>
             </div>
             <X className="h-4 w-4 cursor-pointer" onClick={() => setOpen(false)} />
           </DialogHeader>
-          <EditCakeForm setOpen={setOpen} cakeId={cakeId} refetch={refetch} />
+          <EditProductTypeForm setOpen={setOpen} typeId={typeId} refetch={refetch} />
         </DialogContent>
       </Dialog>
     </div>

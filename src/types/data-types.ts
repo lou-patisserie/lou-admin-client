@@ -118,4 +118,11 @@ export interface CakeById {
 export interface ProductTypes {
   ID: string;
   name: string;
+  desc: string;
+}
+
+export interface TypeById {
+  ID: string;
+  name: string;
+  desc: string;
 }

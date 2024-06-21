@@ -14,16 +14,17 @@ import { Cakes } from "@/types/data-types";
 interface AddModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  cakes: Cakes[];
   refetch: () => void;
 }
 
-const AddModal = ({ open, setOpen, cakes, refetch }: AddModalProps) => {
+const AddModal = ({ open, setOpen, refetch }: AddModalProps) => {
   return (
-    <div className="max-w-[400px]">
+    <div className="max-w-fit">
       <Dialog open={open}>
         <DialogContent
-          className={"max-w-fit overflow-y-auto max-h-screen overflow-x-hidden md:max-w-md"}
+          className={
+            "max-w-md rounded-md overflow-y-auto max-h-screen overflow-x-hidden md:max-w-md"
+          }
         >
           <DialogHeader className="max-w-[86vw] flex flex-row justify-between">
             <div>

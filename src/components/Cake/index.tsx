@@ -105,7 +105,7 @@ const CakeComponent = () => {
             />
           ))}
         </ContentWrapper>
-        <AddModal open={isOpen} setOpen={setIsOpen} cakes={cakes} refetch={refetch} />
+        <AddModal open={isOpen} setOpen={setIsOpen} refetch={refetch} />
       </section>
     </>
   );
