@@ -8,7 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Input } from "../../UI/Input";
 import { useToast } from "../../UI/Toast/use-toast";
 import { useCallback, useEffect, useState } from "react";
-import { addCake, editCake, getCakebyId } from "@/api/cakes-api";
+import { editCake, getCakebyId } from "@/api/cakes-api";
 import { LoadingButton } from "@/components/UI/LoadingButton";
 import { useRecoilState } from "recoil";
 import { ImagePlus } from "lucide-react";
@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/UI/Select";
-import { CakeById, ProductTypes } from "@/types/data-types";
+import { CakeById, FormDataCake, ProductTypes } from "@/types/data-types";
 import { getAllProductTypes } from "@/api/product-type-api";
 import { app } from "@/lib/firebase";
 import { Button } from "@/components/UI/Button";
@@ -59,7 +59,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
   const [step, setStep] = useState(1);
   const [user] = useRecoilState(userState);
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataCake>({
     product_type_id: cake?.cake.ProductType.ID,
     name: cake?.cake.name,
     is_best_seller: cake?.cake.is_best_seller ? "Yes" : "No",
@@ -73,13 +73,18 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
     variant_name_1: cake?.variants[0].name,
     variant_desc_1: cake?.variants[0].desc,
     variant_price_1: cake?.variants[0].price,
-    variant_name_2: cake?.variants[1].name,
-    variant_desc_2: cake?.variants[1].desc,
-    variant_price_2: cake?.variants[1].price,
+    variant_name_2: cake?.variants[1]?.name,
+    variant_desc_2: cake?.variants[1]?.desc,
+    variant_price_2: cake?.variants[1]?.price,
     about_cake_desc: cake?.aboutCake.desc,
     allergen_desc: cake?.aboutCake.allergen,
     ingredients_desc: cake?.aboutCake.ingredients,
     storage_serving_desc: cake?.aboutCake.storage_serving,
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: formData,
   });
 
   const fetchCake = useCallback(async () => {
@@ -100,10 +105,26 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
     fetchCake();
   }, [fetchCake]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: formData,
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
   });
+
+  const formatCurrency = (value: string) => {
+    const number = parseFloat(value.replace(/[^\d]/g, ""));
+    if (isNaN(number)) return "";
+    return currencyFormatter.format(number).replace("IDR", "IDR ");
+    // const formattedNumber = currencyFormatter.format(number);
+    // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
+  };
+
+  const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const formattedValue = formatCurrency(value);
+    field.onChange(value.replace(/[^\d]/g, ""));
+    setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
+  };
 
   useEffect(() => {
     if (cake) {
@@ -120,16 +141,17 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
         sub_image2: cake.cake.sub_image2,
         variant_name_1: cake.variants[0].name,
         variant_desc_1: cake.variants[0].desc,
-        variant_price_1: cake.variants[0].price,
-        variant_name_2: cake.variants[1].name,
-        variant_desc_2: cake.variants[1].desc,
-        variant_price_2: cake.variants[1].price,
+        variant_price_1: formatCurrency(cake.variants[0].price),
+        variant_name_2: cake?.variants[1]?.name,
+        variant_desc_2: cake?.variants[1]?.desc,
+        variant_price_2: cake?.variants[1]?.price ? formatCurrency(cake?.variants[1]?.price) : "",
         about_cake_desc: cake.aboutCake.desc,
         allergen_desc: cake.aboutCake.allergen,
         ingredients_desc: cake.aboutCake.ingredients,
         storage_serving_desc: cake.aboutCake.storage_serving,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cake, form]);
 
   const adminTokenString =
@@ -520,7 +542,12 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                     <FormItem>
                       <FormLabel className="font-bold">Variant price 1</FormLabel>
                       <FormControl>
-                        <Input defaultValue={cake?.variants[0].price} {...field} />
+                        <Input
+                          defaultValue={field.value}
+                          {...field}
+                          value={formData.variant_price_1}
+                          onChange={handleInputChange(field)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -533,7 +560,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                     <FormItem>
                       <FormLabel className="font-bold">Variant name 2 (optional)</FormLabel>
                       <FormControl>
-                        <Input defaultValue={cake?.variants[1].name} {...field} />
+                        <Input {...field} defaultValue={cake?.variants[1]?.name} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -547,9 +574,9 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                       <FormLabel className="font-bold">Variant desc 2 (optional)</FormLabel>
                       <FormControl>
                         <Input
-                          defaultValue={cake?.variants[1].desc}
                           {...field}
                           disabled={isDisabled}
+                          defaultValue={cake?.variants[1]?.desc}
                         />
                       </FormControl>
                       <FormMessage />
@@ -564,9 +591,11 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                       <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
                       <FormControl>
                         <Input
-                          defaultValue={cake?.variants[0].price}
+                          defaultValue={field.value}
                           {...field}
                           disabled={isDisabled}
+                          value={formData.variant_price_2}
+                          onChange={handleInputChange(field)}
                         />
                       </FormControl>
                       <FormMessage />

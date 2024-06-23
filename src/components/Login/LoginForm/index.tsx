@@ -36,7 +36,14 @@ const LoginForm = () => {
     setLoading(true);
     try {
       const response = await authLogin(values);
-      if (response.success) {
+      if (response.data.user.role_id === 1) {
+        setLoading(false);
+        toast({
+          description: "Not authorized!",
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      } else if (response.success) {
         const token = response.data.token;
         const expirationTime = Date.now() + 60 * 60 * 1000;
         console.log("exp", expirationTime);
@@ -60,11 +67,21 @@ const LoginForm = () => {
       }
     } catch (error: any) {
       console.error(error);
-      toast({
-        description: error.response.data.message.toString(),
-        className: "bg-red-600 text-white border-none",
-        duration: 2000,
-      });
+
+      if (!error.response) {
+        toast({
+          description: "Network error. Please check your internet connection and try again.",
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      } else {
+        toast({
+          description: error.response.data.message.toString(),
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      }
+
       setLoading(false);
     }
   };

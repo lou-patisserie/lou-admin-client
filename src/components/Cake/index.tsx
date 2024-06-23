@@ -43,7 +43,7 @@ const CakeComponent = () => {
     try {
       const data = await getAllCakes();
 
-      setCakes(data.data.reverse());
+      setCakes(data.data);
     } catch (error) {
       console.error("Failed to fetch fishes or types:", error);
     } finally {

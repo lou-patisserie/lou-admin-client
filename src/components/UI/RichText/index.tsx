@@ -12,12 +12,10 @@ interface RichTextProps {
 export default function RichText({ value, onChange }: RichTextProps) {
   const quillModules = {
     toolbar: [
-      [{ header: [1, 2, 3, false] }],
+      [{ header: [3, 4, 5, 6, false] }],
       ["bold", "italic", "underline", "strike"],
       [{ list: "ordered" }, { list: "bullet" }],
       [{ align: [] }],
-      [{ color: [] }],
-      ["code-block"],
     ],
   };
 

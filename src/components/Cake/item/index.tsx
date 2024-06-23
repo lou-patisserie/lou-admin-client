@@ -1,6 +1,6 @@
 import { Pen, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Cake, Cakes } from "@/types/data-types";
+import { Cakes } from "@/types/data-types";
 import Image from "next/image";
 import DeleteModal from "../modal/deleteModal";
 import { deleteCake } from "@/api/cakes-api";
@@ -16,7 +16,6 @@ interface CakeItemsProps {
 
 export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeItemsProps) {
   const {
-    ID,
     name,
     is_best_seller,
     is_new_arrival,
@@ -25,7 +24,6 @@ export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeIte
     is_chocolate_based,
     main_image,
     ProductType,
-    Users,
   } = cake;
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -66,7 +64,7 @@ export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeIte
           <SpinnerWithText text="Deleting..." />
         </div>
       )}
-      <div className={`flex gap-2 items-start`}>
+      <div className={`flex gap-2 items-center`}>
         <div className="h-40 w-40 pt-2">
           <Image
             src={main_image?.startsWith("http") ? main_image : "/assets/No-Image.png"}
@@ -82,25 +80,25 @@ export default function CakeItems({ cake, cakes, updateCakes, refetch }: CakeIte
         </div>
         <div className="text-black w-full text-start text-sm flex flex-col pt-2">
           <p>
-            Name: <span>{name}</span>
+            Name : <span>{name}</span>
           </p>
           <p>
-            Type: <span>{ProductType.name}</span>
+            Type : <span>{ProductType.name}</span>
           </p>
           <p>
-            New Arrival: <span>{is_new_arrival ? "Yes" : "No"}</span>
+            New Arrival : <span>{is_new_arrival ? "Yes" : "No"}</span>
           </p>
           <p>
-            Best seller: <span>{is_best_seller ? "Yes" : "No"}</span>
+            Best seller : <span>{is_best_seller ? "Yes" : "No"}</span>
           </p>
           <p>
-            Fruit Based: <span>{is_fruit_based ? "Yes" : "No"}</span>
+            Fruit Based : <span>{is_fruit_based ? "Yes" : "No"}</span>
           </p>
           <p>
-            Nut Free: <span>{is_nut_free ? "Yes" : "No"}</span>
+            Nut Free : <span>{is_nut_free ? "Yes" : "No"}</span>
           </p>
           <p>
-            Chocolate Based: <span>{is_chocolate_based ? "Yes" : "No"}</span>
+            Chocolate Based : <span>{is_chocolate_based ? "Yes" : "No"}</span>
           </p>
         </div>
         <div className="flex flex-col gap-3">

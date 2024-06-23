@@ -138,6 +138,27 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
     fetchType();
   }, [fetchType]);
 
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  });
+
+  const formatCurrency = (value: string) => {
+    const number = parseFloat(value.replace(/[^\d]/g, ""));
+    if (isNaN(number)) return "";
+    return currencyFormatter.format(number).replace("IDR", "IDR ");
+    // const formattedNumber = currencyFormatter.format(number);
+    // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
+  };
+
+  const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const formattedValue = formatCurrency(value);
+    field.onChange(value.replace(/[^\d]/g, ""));
+    setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     const maxFileSize = 1024 * 1024 * 2;
@@ -462,7 +483,11 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant price 1</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        value={formData.variant_price_1}
+                        onChange={handleInputChange(field)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -501,7 +526,12 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled={isDisabled} />
+                      <Input
+                        {...field}
+                        disabled={isDisabled}
+                        value={formData.variant_price_2}
+                        onChange={handleInputChange(field)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

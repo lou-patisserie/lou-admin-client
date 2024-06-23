@@ -11,7 +11,7 @@ interface UserLayoutProps {
 
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   const router = usePathname();
-  const privatePaths = ["/dashboard", "/product-type", "/add-ons"];
+  const privatePaths = ["/dashboard", "/product-type", "/add-ons", "/account"];
 
   const Layout = privatePaths.includes(router) ? PrivateLayout : PublicLayout;
 
