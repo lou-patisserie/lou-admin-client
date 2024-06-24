@@ -13,6 +13,7 @@ import SpinnerWithText from "@/components/UI/Spinner";
 import { formSchema } from "./schemas";
 import { ProfileType } from "@/types/data-types";
 import { adminProfileById, editProfile } from "@/api/auth-api";
+import { Eye, EyeOff } from "lucide-react";
 
 interface EditTypesProps {
   setOpen: (open: boolean) => void;
@@ -21,6 +22,7 @@ interface EditTypesProps {
 }
 
 const EditProductTypeForm = ({ setOpen, profileId, refetch }: EditTypesProps) => {
+  const [show, setShow] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -97,6 +99,10 @@ const EditProductTypeForm = ({ setOpen, profileId, refetch }: EditTypesProps) =>
     }
   };
 
+  const toggleShow = () => {
+    setShow(prev => !prev);
+  };
+
   const handleSubmit = form.handleSubmit(onSubmit);
 
   return (
@@ -139,9 +145,16 @@ const EditProductTypeForm = ({ setOpen, profileId, refetch }: EditTypesProps) =>
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Password</FormLabel>
+                  <FormLabel className="font-bold">Password / New password</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" />
+                    <div className="flex gap-2 items-center relative">
+                      <Input type={show ? "text" : "password"} {...field} />
+                      {show ? (
+                        <Eye onClick={toggleShow} className="absolute right-4" />
+                      ) : (
+                        <EyeOff onClick={toggleShow} className="absolute right-4" />
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

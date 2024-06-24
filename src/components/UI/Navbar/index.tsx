@@ -4,7 +4,7 @@
 import { CircleUserRound, MenuIcon } from "lucide-react";
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "../Drawer";
 import Link from "next/link";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../Button";
 import { useRecoilState } from "recoil";
 import userState from "@/recoils/userState";
@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   useAuthChecker();
   const [user, setUser] = useRecoilState(userState);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const drawerCloseRef = useRef<HTMLButtonElement>(null);
 
   const adminTokenString =
@@ -52,6 +53,11 @@ const Navbar = () => {
   const handleLinkClick = () => {
     drawerCloseRef.current?.click();
   };
+
+  const handleDropdownItemClick = () => {
+    setDropdownOpen(false);
+  };
+
   return (
     <div className="w-[100vw] h-10 bg-luoDarkBiege bg-opacity-90 flex justify-between items-center px-2 sm:px-12">
       <Drawer direction="left">
@@ -86,7 +92,7 @@ const Navbar = () => {
         </DrawerContent>
         <DrawerClose ref={drawerCloseRef} className="hidden" />
       </Drawer>
-      <DropdownMenu>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             className="bg-transparent hover:bg-brown-light hover:text-luoDarkBiege flex gap-1"
@@ -98,7 +104,7 @@ const Navbar = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem className="text-center px-2 py-1 hover:bg-brown-light transition duration-500">
-            <Link href={"/account"} onClick={handleLinkClick}>
+            <Link href={"/account"} onClick={handleDropdownItemClick}>
               <p className="font-semibold text-luoDarkBiege">Account Setting</p>
             </Link>
           </DropdownMenuItem>

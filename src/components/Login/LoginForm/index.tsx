@@ -11,8 +11,7 @@ import { useRecoilState } from "recoil";
 import authState from "@/recoils/authState";
 import { useState } from "react";
 import { LoadingButton } from "../../UI/LoadingButton";
-import { Router } from "lucide-react";
-import { redirect } from "next/navigation";
+import { Eye, EyeOff, Router } from "lucide-react";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -20,6 +19,11 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const [show, setShow] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useRecoilState(authState);
+  const [isLoading, setLoading] = useState(false);
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,10 +31,6 @@ const LoginForm = () => {
       password: "",
     },
   });
-
-  const [isAuthenticated, setAuthenticated] = useRecoilState(authState);
-  const [isLoading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -86,6 +86,10 @@ const LoginForm = () => {
     }
   };
 
+  const toggleShow = () => {
+    setShow(prev => !prev);
+  };
+
   return (
     <div className="bg-white p-10 h-full w-full flex flex-col justify-center items-center sm:w-[80%] md:w-[60%] lg:w-[40%]">
       <Form {...form}>
@@ -110,7 +114,14 @@ const LoginForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <div className="flex gap-2 items-center relative">
+                    <Input type={show ? "text" : "password"} {...field} />
+                    {show ? (
+                      <Eye onClick={toggleShow} className="absolute right-2" />
+                    ) : (
+                      <EyeOff onClick={toggleShow} className="absolute right-2" />
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

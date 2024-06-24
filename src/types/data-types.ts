@@ -116,12 +116,14 @@ export type ProductTypes = {
   ID: string;
   name: string;
   desc: string;
+  order: number;
 };
 
 export type TypeById = {
   ID: string;
   name: string;
   desc: string;
+  order: number;
 };
 
 export type AddOnsType = {

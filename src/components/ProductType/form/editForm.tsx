@@ -31,6 +31,7 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
     defaultValues: {
       name: type?.name || "",
       desc: type?.desc || "",
+      order: type?.order || 0,
     },
   });
 
@@ -117,6 +118,19 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="font-bold">Description</FormLabel>
+                    <FormControl>
+                      <Input {...field} defaultValue={type?.name} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="order"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Order Number</FormLabel>
                     <FormControl>
                       <Input {...field} defaultValue={type?.name} />
                     </FormControl>

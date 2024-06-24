@@ -17,7 +17,7 @@ const ProductComponent = () => {
     try {
       const data = await getAllProductTypes();
 
-      setTypes(data.data.reverse());
+      setTypes(data.data);
     } catch (error) {
       console.error("Failed to fetch fishes or types:", error);
     } finally {
