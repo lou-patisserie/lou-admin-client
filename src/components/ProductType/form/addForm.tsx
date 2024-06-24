@@ -26,14 +26,15 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
     defaultValues: {
       name: "",
       desc: "",
-      order: 0,
+      order: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const newValues = { ...values, order: values.order === "" ? null : Number(values.order) };
     setLoading(true);
     try {
-      const response = await addProductType(values);
+      const response = await addProductType(newValues);
       if (response.success) {
         setLoading(false);
         toast({
@@ -95,7 +96,7 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
                 <FormItem>
                   <FormLabel className="font-bold">Order Number</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="number" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

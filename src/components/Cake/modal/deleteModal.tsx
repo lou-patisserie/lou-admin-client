@@ -19,14 +19,14 @@ const DeleteModal = ({ open, setOpen, handleDelete }: AddModalProps) => {
   return (
     <div>
       <Dialog open={open}>
-        <DialogContent className={"max-w-fit max-h-screen"}>
+        <DialogContent className={"max-w-[96%] max-h-screen rounded-xl sm:max-w-fit"}>
           <DialogHeader>
             <DialogTitle>Delete Confirmation</DialogTitle>
           </DialogHeader>
           <div>
             <p>Are you sure to delete this cake?</p>
           </div>
-          <DialogFooter className="">
+          <DialogFooter className="gap-2">
             <Button
               className="text-luoDarkBiege border-luoDarkBiege"
               variant="outline"
