@@ -11,9 +11,9 @@ export const firstStepSchema = z.object({
   variant_name_1: z.string().trim().min(1, { message: "variant name 1 required" }),
   variant_desc_1: z.string().trim().min(1, { message: "variant desc 1 required" }),
   variant_price_1: z.string().trim().min(1, { message: "variant price 1 required" }),
-  variant_name_2: z.string().trim(),
-  variant_desc_2: z.string().trim(),
-  variant_price_2: z.string().trim(),
+  variant_name_2: z.string().trim().optional(),
+  variant_desc_2: z.string().trim().optional(),
+  variant_price_2: z.string().trim().optional(),
 });
 
 export const secondStepSchema = z.object({

@@ -11,8 +11,7 @@ import { useRecoilState } from "recoil";
 import authState from "@/recoils/authState";
 import { useState } from "react";
 import { LoadingButton } from "../../UI/LoadingButton";
-import { Router } from "lucide-react";
-import { redirect } from "next/navigation";
+import { Eye, EyeOff, Router } from "lucide-react";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -20,6 +19,11 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const [show, setShow] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useRecoilState(authState);
+  const [isLoading, setLoading] = useState(false);
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,15 +32,18 @@ const LoginForm = () => {
     },
   });
 
-  const [isAuthenticated, setAuthenticated] = useRecoilState(authState);
-  const [isLoading, setLoading] = useState(false);
-  const { toast } = useToast();
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
       const response = await authLogin(values);
-      if (response.success) {
+      if (response.data.user.role_id === 1) {
+        setLoading(false);
+        toast({
+          description: "Not authorized!",
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      } else if (response.success) {
         const token = response.data.token;
         const expirationTime = Date.now() + 60 * 60 * 1000;
         console.log("exp", expirationTime);
@@ -60,13 +67,27 @@ const LoginForm = () => {
       }
     } catch (error: any) {
       console.error(error);
-      toast({
-        description: error.response.data.message.toString(),
-        className: "bg-red-600 text-white border-none",
-        duration: 2000,
-      });
+
+      if (!error.response) {
+        toast({
+          description: "Network error. Please check your internet connection and try again.",
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      } else {
+        toast({
+          description: error.response.data.message.toString(),
+          className: "bg-red-600 text-white border-none",
+          duration: 2000,
+        });
+      }
+
       setLoading(false);
     }
+  };
+
+  const toggleShow = () => {
+    setShow(prev => !prev);
   };
 
   return (
@@ -93,7 +114,14 @@ const LoginForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <div className="flex gap-2 items-center relative">
+                    <Input type={show ? "text" : "password"} {...field} />
+                    {show ? (
+                      <Eye onClick={toggleShow} className="absolute right-2" />
+                    ) : (
+                      <EyeOff onClick={toggleShow} className="absolute right-2" />
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

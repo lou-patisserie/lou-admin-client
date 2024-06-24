@@ -24,7 +24,7 @@ const DeleteModal = ({ open, setOpen, handleDelete }: AddModalProps) => {
             <DialogTitle>Delete Confirmation</DialogTitle>
           </DialogHeader>
           <div>
-            <p>Are you sure to delete this Product type?</p>
+            <p>Are you sure to delete this Add-Ons?</p>
           </div>
           <DialogFooter className="">
             <Button

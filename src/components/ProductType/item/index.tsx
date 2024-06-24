@@ -15,16 +15,12 @@ interface TypesItemsProps {
 }
 
 export default function ProductTypeItems({ type, types, updateTypes, refetch }: TypesItemsProps) {
-  const { ID, name, desc } = type;
+  const { ID, name, desc, order } = type;
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [deleting, setIsDeleting] = useState(false);
-
-  const adminTokenString =
-    typeof window !== "undefined" ? sessionStorage.getItem("admin-token") : null;
-  const adminToken = adminTokenString ? JSON.parse(adminTokenString) : null;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -58,10 +54,13 @@ export default function ProductTypeItems({ type, types, updateTypes, refetch }: 
       <div className={`flex gap-2 items-start py-4`}>
         <div className="text-black w-full text-start text-sm flex flex-col pt-2">
           <p>
-            Name: <span>{name}</span>
+            Name : <span>{name}</span>
           </p>
           <p>
-            Description: <span>{desc}</span>
+            Description : <span>{desc}</span>
+          </p>
+          <p>
+            Order number : <span>{order}</span>
           </p>
         </div>
         <div className="flex flex-col gap-3">

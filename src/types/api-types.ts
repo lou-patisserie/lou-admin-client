@@ -34,9 +34,9 @@ export type AddCakeParams = {
   variant_name_1: string;
   variant_desc_1: string;
   variant_price_1: string;
-  variant_name_2: string;
-  variant_desc_2: string;
-  variant_price_2: string;
+  variant_name_2?: string;
+  variant_desc_2?: string;
+  variant_price_2?: string;
   about_cake_desc: string;
   allergen_desc: string;
   ingredients_desc: string;
@@ -46,4 +46,20 @@ export type AddCakeParams = {
 export type ProductTypesParams = {
   name: string;
   desc: string;
+};
+
+export type AddOnsTypeParams = {
+  name: string;
+  desc: string;
+  price: string;
+  main_image: string;
+  sub_image1: string;
+  sub_image2: string;
+};
+
+export type ProfileBody = {
+  username: string;
+  email: string;
+  password: string;
+  avatar?: string;
 };

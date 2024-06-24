@@ -1,18 +1,21 @@
 import { Pen, Trash2 } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import DeleteModal from "../modal/deleteModal";
+import EditModal from "../modal/editModal";
 import SpinnerWithText from "@/components/UI/Spinner";
-import { ProductTypes } from "@/types/data-types";
+import { AddOnsType } from "@/types/data-types";
+import { deleteAddOns } from "@/api/add-ons-api";
 
-interface TypesItemsProps {
-  type: ProductTypes;
-  types: ProductTypes[];
-  updateTypes: (updateTypes: ProductTypes[]) => void;
+interface AddOnsItemsProps {
+  addOn: AddOnsType;
+  addOns: AddOnsType[];
+  updateAddOns: (updatedCakes: AddOnsType[]) => void;
   refetch: () => void;
 }
 
-export default function CakeItems({ type, types, updateTypes, refetch }: TypesItemsProps) {
-  const { ID, name, desc } = type;
+const AddOnsItem = ({ addOn, addOns, updateAddOns, refetch }: AddOnsItemsProps) => {
+  const { ID, name, desc, main_image } = addOn;
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -26,12 +29,12 @@ export default function CakeItems({ type, types, updateTypes, refetch }: TypesIt
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await deleteCake(adminToken.token, type.ID);
+      const response = await deleteAddOns(adminToken.token, addOn.ID);
       if (response.success) {
         setIsVisible(false);
         setTimeout(() => {
-          const updatedCakes = types.filter(t => t.ID !== type.ID);
-          updateTypes(updatedCakes);
+          const updateAddOn = addOns.filter(a => a.ID !== addOn.ID);
+          updateAddOns(updateAddOn);
           setIsDeleting(false);
         }, 500);
       }
@@ -52,13 +55,26 @@ export default function CakeItems({ type, types, updateTypes, refetch }: TypesIt
           <SpinnerWithText text="Deleting..." />
         </div>
       )}
-      <div className={`flex gap-2 items-start`}>
+      <div className={`flex gap-2 items-center justify-center`}>
+        <div className="h-40 w-40 pt-2">
+          <Image
+            src={main_image?.startsWith("http") ? main_image : "/assets/No-Image.png"}
+            alt="add ons image"
+            className="aspect-square object-cover rounded-lg shadow"
+            width={200}
+            height={200}
+            onError={(e: any) => {
+              e.target.onerror = null;
+              e.target.src = "/assets/No-Image.png";
+            }}
+          />
+        </div>
         <div className="text-black w-full text-start text-sm flex flex-col pt-2">
           <p>
-            Name: <span>{name}</span>
+            Name : <span>{name}</span>
           </p>
           <p>
-            Description: <span>{desc}</span>
+            Description : <span>{desc}</span>
           </p>
         </div>
         <div className="flex flex-col gap-3">
@@ -85,10 +101,13 @@ export default function CakeItems({ type, types, updateTypes, refetch }: TypesIt
       <EditModal
         open={editModalOpen}
         setOpen={setEditModalOpen}
-        cakeId={cake.ID}
+        addOnsId={ID}
+        addOnsName={name}
         refetch={refetch}
       />
       <div className="w-full h-[2px] bg-gray-500 opacity-80 my-2" />
     </div>
   );
-}
+};
+
+export default AddOnsItem;

@@ -26,6 +26,7 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
     defaultValues: {
       name: "",
       desc: "",
+      order: 0,
     },
   });
 
@@ -80,6 +81,19 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-bold">Description</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="order"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold">Order Number</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

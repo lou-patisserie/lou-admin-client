@@ -3,7 +3,7 @@ import { AddCakeParams, CakeQueryParams } from "../types/api-types";
 
 export const getAllCakes = async () => {
   try {
-    const response = await api.get("/cakes");
+    const response = await api.get("/cakes", { params: { sort: "desc" } });
     return response.data;
   } catch (error) {
     console.error(error);
