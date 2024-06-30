@@ -31,7 +31,7 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
     defaultValues: {
       name: type?.name || "",
       desc: type?.desc || "",
-      order: type?.order || 0,
+      order: type?.order || "",
     },
   });
 
@@ -64,8 +64,9 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
+    const newValues = { ...values, order: values.order === "" ? null : Number(values.order) };
     try {
-      const response = await editProductType(typeId, values);
+      const response = await editProductType(typeId, newValues);
       if (response.success) {
         setLoading(false);
         toast({
@@ -132,7 +133,7 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
                   <FormItem>
                     <FormLabel className="font-bold">Order Number</FormLabel>
                     <FormControl>
-                      <Input {...field} defaultValue={type?.name} />
+                      <Input {...field} defaultValue={type?.order} type="number" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
