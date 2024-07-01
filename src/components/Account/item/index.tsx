@@ -14,7 +14,7 @@ export default function ProfileItems({ profile, refetch }: ProfileItemsProps) {
   const { ID, role_id, username, email, avatar } = profile;
 
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const role = role_id === 3 ? "admin" : role_id === 2 ? "manager" : "user";
+  const role = role_id === 3 ? "manager" : role_id === 2 ? "admin" : "user";
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -52,10 +52,17 @@ export default function ProfileItems({ profile, refetch }: ProfileItemsProps) {
       </div>
       <div className="flex flex-col gap-3 self-end">
         <div onClick={() => setEditModalOpen(true)}>
-          <Button className="transition duration-150 bg-luoDarkBiege ">Update</Button>
+          <Button className="transition duration-150 bg-luoDarkBiege ">
+            Update
+          </Button>
         </div>
       </div>
-      <EditModal open={editModalOpen} setOpen={setEditModalOpen} profileId={ID} refetch={refetch} />
+      <EditModal
+        open={editModalOpen}
+        setOpen={setEditModalOpen}
+        profileId={ID}
+        refetch={refetch}
+      />
     </div>
   );
 }
