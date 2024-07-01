@@ -3,7 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../UI/Form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../UI/Form";
 import { Input } from "../../UI/Input";
 import { useToast } from "../../UI/Toast/use-toast";
 import { useState } from "react";
@@ -30,8 +37,17 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
     },
   });
 
+  const handleInputChange =
+    (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      field.onChange(value.replace(/[^\d]/g, ""));
+    };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newValues = { ...values, order: values.order === "" ? null : Number(values.order) };
+    const newValues = {
+      ...values,
+      order: values.order === "" ? null : Number(values.order),
+    };
     setLoading(true);
     try {
       const response = await addProductType(newValues);
@@ -68,7 +84,9 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Name</FormLabel>
+                  <FormLabel className="font-bold">
+                    Name&nbsp;<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -81,7 +99,9 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
               name="desc"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Description</FormLabel>
+                  <FormLabel className="font-bold">
+                    Description&nbsp;<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -94,9 +114,15 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
               name="order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Order Number</FormLabel>
+                  <FormLabel className="font-bold">
+                    Order Number&nbsp;<span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" />
+                    <Input
+                      {...field}
+                      type="number"
+                      onChange={handleInputChange(field)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,7 +138,11 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
             >
               Cancel
             </Button>
-            <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
+            <LoadingButton
+              loading={isLoading}
+              className="bg-luoDarkBiege"
+              type="submit"
+            >
               Add Type
             </LoadingButton>
           </div>

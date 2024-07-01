@@ -3,7 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../UI/Form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../UI/Form";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Input } from "../../UI/Input";
 import { useToast } from "../../UI/Toast/use-toast";
@@ -27,7 +34,12 @@ import { ProductTypes } from "@/types/data-types";
 import { getAllProductTypes } from "@/api/product-type-api";
 import { app } from "@/lib/firebase";
 import { Button } from "@/components/UI/Button";
-import { formSchema, firstStepSchema, secondStepSchema, thirdStepSchema } from "./schemas";
+import {
+  formSchema,
+  firstStepSchema,
+  secondStepSchema,
+  thirdStepSchema,
+} from "./schemas";
 import RichText from "@/components/UI/RichText";
 import SpinnerWithText from "@/components/UI/Spinner";
 interface AddCakeProps {
@@ -84,7 +96,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
   });
 
   const adminTokenString =
-    typeof window !== "undefined" ? sessionStorage.getItem("admin-token") : null;
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("admin-token")
+      : null;
   const adminToken = adminTokenString ? JSON.parse(adminTokenString) : null;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -152,12 +166,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
     // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
   };
 
-  const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const formattedValue = formatCurrency(value);
-    field.onChange(value.replace(/[^\d]/g, ""));
-    setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
-  };
+  const handleInputChange =
+    (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      const formattedValue = formatCurrency(value);
+      field.onChange(value.replace(/[^\d]/g, ""));
+      setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
+    };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -195,22 +210,34 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
           try {
             const snapshot = await uploadBytes(storageRef, blob as Blob);
             const downloadURL = await getDownloadURL(snapshot.ref);
-            form.setValue(e.target.name as keyof z.infer<typeof formSchema>, downloadURL);
+            form.setValue(
+              e.target.name as keyof z.infer<typeof formSchema>,
+              downloadURL
+            );
             setFormErrors((prevErrors: {}) => ({
               ...prevErrors,
               [e.target.name]: undefined,
             }));
             if (e.target.name === "main_image") {
               setImage1(downloadURL);
-              setFormData(prevData => ({ ...prevData, main_image: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                main_image: downloadURL,
+              }));
             }
             if (e.target.name === "sub_image1") {
               setImage2(downloadURL);
-              setFormData(prevData => ({ ...prevData, sub_image1: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                sub_image1: downloadURL,
+              }));
             }
             if (e.target.name === "sub_image2") {
               setImage3(downloadURL);
-              setFormData(prevData => ({ ...prevData, sub_image2: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                sub_image2: downloadURL,
+              }));
             }
           } catch (error) {
             console.error("Error uploading file:", error);
@@ -289,7 +316,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Name</FormLabel>
+                    <FormLabel className="font-bold">
+                      Name&nbsp;<span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -303,15 +332,23 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="product_type_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Product Type</FormLabel>
+                      <FormLabel className="font-bold">
+                        Product Type&nbsp;
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select a type" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>Types</SelectLabel>
+                              <SelectLabel>
+                                Types<span className="text-red-500">*</span>
+                              </SelectLabel>
                               {types.map(type => (
                                 <SelectItem key={type.ID} value={type.ID}>
                                   {type.name}
@@ -330,9 +367,14 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="is_best_seller"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Best Seller</FormLabel>
+                      <FormLabel className="font-bold">
+                        Best Seller&nbsp;<span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
@@ -356,9 +398,14 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="is_new_arrival"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">New Arrival</FormLabel>
+                      <FormLabel className="font-bold">
+                        New Arrival&nbsp;<span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
@@ -380,9 +427,14 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="is_fruit_based"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Fruit Based</FormLabel>
+                      <FormLabel className="font-bold">
+                        Fruit Based&nbsp;<span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
@@ -406,9 +458,14 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="is_nut_free"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Nut Free</FormLabel>
+                      <FormLabel className="font-bold">
+                        Nut Free&nbsp;<span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
@@ -430,9 +487,15 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                   name="is_chocolate_based"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-bold">Chocolate Based</FormLabel>
+                      <FormLabel className="font-bold">
+                        Chocolate Based&nbsp;
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className="sm:w-[180px]">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
@@ -455,7 +518,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_name_1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant name 1</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant name 1&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -468,7 +534,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_desc_1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant desc 1</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant desc 1&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -481,7 +550,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_price_1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant price 1</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant price 1&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -498,7 +570,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_name_2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant name 2 (optional)</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant name 2 (optional)
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -511,7 +585,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_desc_2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant desc 2 (optional)</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant desc 2 (optional)
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} disabled={isDisabled} />
                     </FormControl>
@@ -524,7 +600,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="variant_price_2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
+                    <FormLabel className="font-bold">
+                      Variant price 2 (optional)
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -546,7 +624,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="allergen_desc"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Allergen description</FormLabel>
+                    <FormLabel className="font-bold">
+                      Allergen description&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -559,7 +640,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="ingredients_desc"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Ingredients Desc</FormLabel>
+                    <FormLabel className="font-bold">
+                      Ingredients Desc&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -572,13 +656,19 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="about_cake_desc"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">About cake description</FormLabel>
+                    <FormLabel className="font-bold">
+                      About cake description&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Controller
                         name="about_cake_desc"
                         control={form.control}
                         render={({ field }) => (
-                          <RichText value={field.value} onChange={field.onChange} />
+                          <RichText
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         )}
                       />
                     </FormControl>
@@ -591,13 +681,19 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="storage_serving_desc"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Storage serving description</FormLabel>
+                    <FormLabel className="font-bold">
+                      Storage serving description&nbsp;
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Controller
                         name="storage_serving_desc"
                         control={form.control}
                         render={({ field }) => (
-                          <RichText value={field.value} onChange={field.onChange} />
+                          <RichText
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         )}
                       />
                     </FormControl>
@@ -614,7 +710,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="main_image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Main Image</FormLabel>
+                    <FormLabel className="font-bold">
+                      Main Image&nbsp;<span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-6 w-full relative">
                         {uploading1 ? (
@@ -642,7 +740,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             className="max-w-[220px]"
                           />
                           {formErrors.main_image && (
-                            <p className="text-red-500">{formErrors.main_image}</p>
+                            <p className="text-red-500">
+                              {formErrors.main_image}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -656,7 +756,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="sub_image1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Sub Image 1</FormLabel>
+                    <FormLabel className="font-bold">
+                      Sub Image 1&nbsp;<span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-6 w-full relative">
                         {uploading2 ? (
@@ -684,7 +786,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             className="max-w-[220px]"
                           />
                           {formErrors.sub_image1 && (
-                            <p className="text-red-500">{formErrors.sub_image1}</p>
+                            <p className="text-red-500">
+                              {formErrors.sub_image1}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -698,7 +802,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                 name="sub_image2"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Sub Image 2</FormLabel>
+                    <FormLabel className="font-bold">
+                      Sub Image 2&nbsp;<span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-6 w-full relative">
                         {uploading3 ? (
@@ -726,7 +832,9 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             className="max-w-[220px]"
                           />
                           {formErrors.sub_image2 && (
-                            <p className="text-red-500">{formErrors.sub_image2}</p>
+                            <p className="text-red-500">
+                              {formErrors.sub_image2}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -759,7 +867,11 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
               </Button>
             )}
             {step === 3 && (
-              <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
+              <LoadingButton
+                loading={isLoading}
+                className="bg-luoDarkBiege"
+                type="submit"
+              >
                 Add Cake
               </LoadingButton>
             )}

@@ -3,7 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../UI/Form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../UI/Form";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Input } from "../../UI/Input";
 import { useToast } from "../../UI/Toast/use-toast";
@@ -57,7 +64,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
   });
 
   const adminTokenString =
-    typeof window !== "undefined" ? sessionStorage.getItem("admin-token") : null;
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("admin-token")
+      : null;
   const adminToken = adminTokenString ? JSON.parse(adminTokenString) : null;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -105,12 +114,13 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
     // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
   };
 
-  const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const formattedValue = formatCurrency(value);
-    field.onChange(value.replace(/[^\d]/g, ""));
-    setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
-  };
+  const handleInputChange =
+    (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      const formattedValue = formatCurrency(value);
+      field.onChange(value.replace(/[^\d]/g, ""));
+      setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
+    };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -148,22 +158,34 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
           try {
             const snapshot = await uploadBytes(storageRef, blob as Blob);
             const downloadURL = await getDownloadURL(snapshot.ref);
-            form.setValue(e.target.name as keyof z.infer<typeof formSchema>, downloadURL);
+            form.setValue(
+              e.target.name as keyof z.infer<typeof formSchema>,
+              downloadURL
+            );
             setFormErrors((prevErrors: {}) => ({
               ...prevErrors,
               [e.target.name]: undefined,
             }));
             if (e.target.name === "main_image") {
               setImage1(downloadURL);
-              setFormData(prevData => ({ ...prevData, main_image: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                main_image: downloadURL,
+              }));
             }
             if (e.target.name === "sub_image1") {
               setImage2(downloadURL);
-              setFormData(prevData => ({ ...prevData, sub_image1: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                sub_image1: downloadURL,
+              }));
             }
             if (e.target.name === "sub_image2") {
               setImage3(downloadURL);
-              setFormData(prevData => ({ ...prevData, sub_image2: downloadURL }));
+              setFormData(prevData => ({
+                ...prevData,
+                sub_image2: downloadURL,
+              }));
             }
           } catch (error) {
             console.error("Error uploading file:", error);
@@ -188,7 +210,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Name</FormLabel>
+                <FormLabel className="font-bold">
+                  Name&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -201,7 +225,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="desc"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Description</FormLabel>
+                <FormLabel className="font-bold">
+                  Description&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -214,9 +240,15 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Price</FormLabel>
+                <FormLabel className="font-bold">
+                  Price&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
-                  <Input {...field} value={formData.price} onChange={handleInputChange(field)} />
+                  <Input
+                    {...field}
+                    value={formData.price}
+                    onChange={handleInputChange(field)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -227,7 +259,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="main_image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Main Image</FormLabel>
+                <FormLabel className="font-bold">
+                  Main Image&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-6 w-full relative">
                     {uploading1 ? (
@@ -269,7 +303,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="sub_image1"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Sub Image 1</FormLabel>
+                <FormLabel className="font-bold">
+                  Sub Image 1&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-6 w-full relative">
                     {uploading2 ? (
@@ -311,7 +347,9 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             name="sub_image2"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold">Sub Image 2</FormLabel>
+                <FormLabel className="font-bold">
+                  Sub Image 2&nbsp;<span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-6 w-full relative">
                     {uploading3 ? (
@@ -357,7 +395,11 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
             >
               Cancel
             </Button>
-            <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
+            <LoadingButton
+              loading={isLoading}
+              className="bg-luoDarkBiege"
+              type="submit"
+            >
               Add Add-Ons
             </LoadingButton>
           </div>
