@@ -78,6 +78,7 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
     (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
     };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -130,7 +131,14 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
                       Name&nbsp;<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} defaultValue={type?.name} />
+                      <Input
+                        {...field}
+                        defaultValue={type?.name}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -145,7 +153,14 @@ const EditProductTypeForm = ({ setOpen, typeId, refetch }: EditTypesProps) => {
                       Description&nbsp;<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} defaultValue={type?.name} />
+                      <Input
+                        {...field}
+                        defaultValue={type?.name}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

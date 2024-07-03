@@ -135,6 +135,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
       const { value } = e.target;
       const formattedValue = formatCurrency(value);
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
       setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
     };
 
@@ -241,7 +242,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
       }));
       return;
     }
-
+    form.clearErrors(e.target.name as keyof z.infer<typeof formSchema>);
     const setUploading =
       e.target.name === "main_image"
         ? setUploading1
@@ -377,7 +378,14 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         Name&nbsp;<span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input defaultValue={cake?.cake.name} {...field} />
+                        <Input
+                          defaultValue={cake?.cake.name}
+                          {...field}
+                          onChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -395,7 +403,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -432,7 +443,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -466,7 +480,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -498,7 +515,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -531,7 +551,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -563,7 +586,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         </FormLabel>
                         <FormControl>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="sm:w-[180px]">
@@ -598,6 +624,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         <Input
                           defaultValue={cake?.variants[0].name}
                           {...field}
+                          onChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -617,6 +647,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         <Input
                           defaultValue={cake?.variants[0].desc}
                           {...field}
+                          onChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -717,6 +751,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         <Input
                           defaultValue={cake?.aboutCake.allergen}
                           {...field}
+                          onChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -736,6 +774,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                         <Input
                           defaultValue={cake?.aboutCake.ingredients}
                           {...field}
+                          onChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -758,7 +800,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                           render={({ field }) => (
                             <RichText
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(e: any) => {
+                                form.clearErrors(field.name);
+                                field.onChange(e);
+                              }}
                             />
                           )}
                         />
@@ -783,7 +828,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                           render={({ field }) => (
                             <RichText
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(e: any) => {
+                                form.clearErrors(field.name);
+                                field.onChange(e);
+                              }}
                             />
                           )}
                         />
@@ -827,6 +875,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                               id="main_image"
                               name="main_image"
                               type="file"
+                              accept="image/png, image/gif, image/jpeg, image/wepb"
                               onChange={handleFileChange}
                             />
                             {formErrors.main_image && (
@@ -872,6 +921,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                               id="sub_image1"
                               name="sub_image1"
                               type="file"
+                              accept="image/png, image/gif, image/jpeg, image/wepb"
                               onChange={handleFileChange}
                             />
                             {formErrors.sub_image1 && (
@@ -917,6 +967,7 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                               id="sub_image2"
                               name="sub_image2"
                               type="file"
+                              accept="image/png, image/gif, image/jpeg, image/wepb"
                               onChange={handleFileChange}
                             />
                             {formErrors.sub_image2 && (

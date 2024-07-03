@@ -171,13 +171,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
       const { value } = e.target;
       const formattedValue = formatCurrency(value);
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
       setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
     };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     const maxFileSize = 1024 * 1024 * 2;
-
     if (!file || file.size > maxFileSize) {
       setFormErrors((prevErrors: {}) => ({
         ...prevErrors,
@@ -185,6 +185,8 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
       }));
       return;
     }
+
+    form.clearErrors(e.target.name as keyof z.infer<typeof formSchema>);
 
     const setUploading =
       e.target.name === "main_image"
@@ -320,7 +322,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       Name&nbsp;<span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -338,7 +346,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -372,7 +383,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -403,7 +417,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -432,7 +449,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -463,7 +483,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -493,7 +516,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(e: any) => {
+                            form.clearErrors(field.name);
+                            field.onChange(e);
+                          }}
                           value={field.value}
                         >
                           <SelectTrigger className="sm:w-[180px]">
@@ -523,7 +549,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -539,7 +571,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -629,7 +667,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -645,7 +689,13 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input
+                        {...field}
+                        onChange={(e: any) => {
+                          form.clearErrors(field.name);
+                          field.onChange(e);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -667,7 +717,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                         render={({ field }) => (
                           <RichText
                             value={field.value}
-                            onChange={field.onChange}
+                            onChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                           />
                         )}
                       />
@@ -692,7 +745,10 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                         render={({ field }) => (
                           <RichText
                             value={field.value}
-                            onChange={field.onChange}
+                            onChange={(e: any) => {
+                              form.clearErrors(field.name);
+                              field.onChange(e);
+                            }}
                           />
                         )}
                       />
@@ -736,6 +792,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             id="main_image"
                             name="main_image"
                             type="file"
+                            accept="image/png, image/gif, image/jpeg, image/wepb"
                             onChange={handleFileChange}
                             className="max-w-[220px]"
                           />
@@ -782,6 +839,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             id="sub_image1"
                             name="sub_image1"
                             type="file"
+                            accept="image/png, image/gif, image/jpeg, image/wepb"
                             onChange={handleFileChange}
                             className="max-w-[220px]"
                           />
@@ -828,6 +886,7 @@ const AddCakeForm = ({ setOpen, refetch }: AddCakeProps) => {
                             id="sub_image2"
                             name="sub_image2"
                             type="file"
+                            accept="image/png, image/gif, image/jpeg, image/wepb"
                             onChange={handleFileChange}
                             className="max-w-[220px]"
                           />

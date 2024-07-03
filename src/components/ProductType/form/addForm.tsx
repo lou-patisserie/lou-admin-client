@@ -41,6 +41,7 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
     (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
     };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -88,7 +89,13 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
                     Name&nbsp;<span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      onChange={(e: any) => {
+                        form.clearErrors(field.name);
+                        field.onChange(e);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,7 +110,13 @@ const AddProductTypeForm = ({ setOpen, refetch }: AddTypeProps) => {
                     Description&nbsp;<span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      onChange={(e: any) => {
+                        form.clearErrors(field.name);
+                        field.onChange(e);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
