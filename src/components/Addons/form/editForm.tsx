@@ -96,6 +96,7 @@ const EditCakeForm = ({
       const { value } = e.target;
       const formattedValue = formatCurrency(value);
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
       setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
     };
 
@@ -180,7 +181,7 @@ const EditCakeForm = ({
       }));
       return;
     }
-
+    form.clearErrors(e.target.name as keyof z.infer<typeof formSchema>);
     const setUploading =
       e.target.name === "main_image"
         ? setUploading1
@@ -266,7 +267,14 @@ const EditCakeForm = ({
                     Name&nbsp;<span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input defaultValue={addons?.name} {...field} />
+                    <Input
+                      defaultValue={addons?.name}
+                      {...field}
+                      onChange={(e: any) => {
+                        form.clearErrors(field.name);
+                        field.onChange(e);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -281,7 +289,14 @@ const EditCakeForm = ({
                     Description&nbsp;<span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input defaultValue={addons?.desc} {...field} />
+                    <Input
+                      defaultValue={addons?.desc}
+                      {...field}
+                      onChange={(e: any) => {
+                        form.clearErrors(field.name);
+                        field.onChange(e);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -119,6 +119,7 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
       const { value } = e.target;
       const formattedValue = formatCurrency(value);
       field.onChange(value.replace(/[^\d]/g, ""));
+      form.clearErrors(field.name);
       setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
     };
 
@@ -133,7 +134,7 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
       }));
       return;
     }
-
+    form.clearErrors(e.target.name as keyof z.infer<typeof formSchema>);
     const setUploading =
       e.target.name === "main_image"
         ? setUploading1
@@ -214,7 +215,13 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
                   Name&nbsp;<span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    onChange={(e: any) => {
+                      form.clearErrors(field.name);
+                      field.onChange(e);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -229,7 +236,13 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
                   Description&nbsp;<span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    onChange={(e: any) => {
+                      form.clearErrors(field.name);
+                      field.onChange(e);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -285,6 +298,7 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
                         id="main_image"
                         name="main_image"
                         type="file"
+                        accept="image/png, image/gif, image/jpeg, image/wepb"
                         onChange={handleFileChange}
                         className="max-w-[220px]"
                       />
@@ -329,6 +343,7 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
                         id="sub_image1"
                         name="sub_image1"
                         type="file"
+                        accept="image/png, image/gif, image/jpeg, image/wepb"
                         onChange={handleFileChange}
                         className="max-w-[220px]"
                       />
@@ -373,6 +388,7 @@ const CreateAddOnsForm = ({ setOpen, refetch }: AddCakeProps) => {
                         id="sub_image2"
                         name="sub_image2"
                         type="file"
+                        accept="image/png, image/gif, image/jpeg, image/wepb"
                         onChange={handleFileChange}
                         className="max-w-[220px]"
                       />
