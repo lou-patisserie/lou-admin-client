@@ -28,11 +28,7 @@ export default function RichText({ value, onChange }: RichTextProps) {
     "blockquote",
     "list",
     "bullet",
-    "link",
-    "image",
     "align",
-    "color",
-    "code-block",
   ];
 
   return (
