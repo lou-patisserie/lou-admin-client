@@ -3,14 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../UI/Form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../UI/Form";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Input } from "../../UI/Input";
 import { useToast } from "../../UI/Toast/use-toast";
@@ -40,12 +33,7 @@ interface FormErrors {
   sub_image2?: string;
 }
 
-const EditCakeForm = ({
-  setOpen,
-  addOnsId,
-  addOnsName,
-  refetch,
-}: EditCakeProps) => {
+const EditCakeForm = ({ setOpen, addOnsId, addOnsName, refetch }: EditCakeProps) => {
   const [addons, setAddons] = useState<AddOnsType | null>(null);
   const [image1, setImage1] = useState("");
   const [image2, setImage2] = useState("");
@@ -91,14 +79,13 @@ const EditCakeForm = ({
     // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
   };
 
-  const handleInputChange =
-    (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      const formattedValue = formatCurrency(value);
-      field.onChange(value.replace(/[^\d]/g, ""));
-      form.clearErrors(field.name);
-      setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
-    };
+  const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const formattedValue = formatCurrency(value);
+    field.onChange(value.replace(/[^\d]/g, ""));
+    form.clearErrors(field.name);
+    setFormData(prev => ({ ...prev, [field.name]: formattedValue }));
+  };
 
   const [formData, setFormData] = useState({
     name: addons?.name,
@@ -119,7 +106,7 @@ const EditCakeForm = ({
       form.reset({
         name: addons?.name,
         desc: addons?.desc,
-        price: formatCurrency(addons?.price),
+        price: addons?.price,
         main_image: addons?.main_image,
         sub_image1: addons?.sub_image1,
         sub_image2: addons?.sub_image2,
@@ -129,9 +116,7 @@ const EditCakeForm = ({
   }, [addons, form]);
 
   const adminTokenString =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("admin-token")
-      : null;
+    typeof window !== "undefined" ? sessionStorage.getItem("admin-token") : null;
   const adminToken = adminTokenString ? JSON.parse(adminTokenString) : null;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -143,12 +128,7 @@ const EditCakeForm = ({
       sub_image2: image3 || values.sub_image2,
     };
     try {
-      const response = await editAddOns(
-        adminToken.token,
-        user.ID,
-        addOnsId,
-        newValues
-      );
+      const response = await editAddOns(adminToken.token, user.ID, addOnsId, newValues);
       if (response.success) {
         setLoading(false);
         toast({
@@ -206,10 +186,7 @@ const EditCakeForm = ({
           try {
             const snapshot = await uploadBytes(storageRef, blob as Blob);
             const downloadURL = await getDownloadURL(snapshot.ref);
-            form.setValue(
-              e.target.name as keyof z.infer<typeof formSchema>,
-              downloadURL
-            );
+            form.setValue(e.target.name as keyof z.infer<typeof formSchema>, downloadURL);
             setFormErrors((prevErrors: {}) => ({
               ...prevErrors,
               [e.target.name]: undefined,
@@ -356,9 +333,7 @@ const EditCakeForm = ({
                           onChange={handleFileChange}
                         />
                         {formErrors.main_image && (
-                          <p className="text-red-500">
-                            {formErrors.main_image}
-                          </p>
+                          <p className="text-red-500">{formErrors.main_image}</p>
                         )}
                       </div>
                     </div>
@@ -401,9 +376,7 @@ const EditCakeForm = ({
                           onChange={handleFileChange}
                         />
                         {formErrors.sub_image1 && (
-                          <p className="text-red-500">
-                            {formErrors.sub_image1}
-                          </p>
+                          <p className="text-red-500">{formErrors.sub_image1}</p>
                         )}
                       </div>
                     </div>
@@ -446,9 +419,7 @@ const EditCakeForm = ({
                           onChange={handleFileChange}
                         />
                         {formErrors.sub_image2 && (
-                          <p className="text-red-500">
-                            {formErrors.sub_image2}
-                          </p>
+                          <p className="text-red-500">{formErrors.sub_image2}</p>
                         )}
                       </div>
                     </div>
@@ -466,11 +437,7 @@ const EditCakeForm = ({
               >
                 Cancel
               </Button>
-              <LoadingButton
-                loading={isLoading}
-                className="bg-luoDarkBiege"
-                type="submit"
-              >
+              <LoadingButton loading={isLoading} className="bg-luoDarkBiege" type="submit">
                 Add Add-Ons
               </LoadingButton>
             </div>
