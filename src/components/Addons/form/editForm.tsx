@@ -71,12 +71,11 @@ const EditCakeForm = ({ setOpen, addOnsId, addOnsName, refetch }: EditCakeProps)
     minimumFractionDigits: 0,
   });
 
-  const formatCurrency = (value: string) => {
-    const number = parseFloat(value.replace(/[^\d]/g, ""));
-    if (isNaN(number)) return "";
-    return currencyFormatter.format(number).replace("IDR", "IDR ");
-    // const formattedNumber = currencyFormatter.format(number);
-    // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
+  const formatCurrency = (value: string | number | undefined): string => {
+    if (typeof value === "undefined") return "";
+    const number = typeof value === "string" ? parseFloat(value.replace(/[^\d]/g, "")) : value;
+    if (isNaN(number as number)) return "";
+    return currencyFormatter.format(number as number).replace("IDR", "IDR ");
   };
 
   const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +105,7 @@ const EditCakeForm = ({ setOpen, addOnsId, addOnsName, refetch }: EditCakeProps)
       form.reset({
         name: addons?.name,
         desc: addons?.desc,
-        price: addons?.price,
+        price: formatCurrency(addons?.price),
         main_image: addons?.main_image,
         sub_image1: addons?.sub_image1,
         sub_image2: addons?.sub_image2,
@@ -123,6 +122,7 @@ const EditCakeForm = ({ setOpen, addOnsId, addOnsName, refetch }: EditCakeProps)
     setLoading(true);
     const newValues = {
       ...values,
+      price: formData.price ? formData.price.replace(/[^\d]/g, "") : "",
       main_image: image1 || values.main_image,
       sub_image1: image2 || values.sub_image1,
       sub_image2: image3 || values.sub_image2,
@@ -290,8 +290,7 @@ const EditCakeForm = ({ setOpen, addOnsId, addOnsName, refetch }: EditCakeProps)
                   <FormControl>
                     <Input
                       {...field}
-                      defaultValue={field.value}
-                      value={formData.price}
+                      defaultValue={formatCurrency(addons?.price)}
                       onChange={handleInputChange(field)}
                     />
                   </FormControl>

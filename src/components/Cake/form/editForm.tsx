@@ -81,6 +81,19 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
     storage_serving_desc: cake?.aboutCake.storage_serving,
   });
 
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  });
+
+  const formatCurrency = (value: string | number | undefined): string => {
+    if (typeof value === "undefined") return "";
+    const number = typeof value === "string" ? parseFloat(value.replace(/[^\d]/g, "")) : value;
+    if (isNaN(number as number)) return "";
+    return currencyFormatter.format(number as number).replace("IDR", "IDR ");
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: formData,
@@ -103,20 +116,6 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
   useEffect(() => {
     fetchCake();
   }, [fetchCake]);
-
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  });
-
-  const formatCurrency = (value: string) => {
-    const number = parseFloat(value.replace(/[^\d]/g, ""));
-    if (isNaN(number)) return "";
-    return currencyFormatter.format(number).replace("IDR", "IDR ");
-    // const formattedNumber = currencyFormatter.format(number);
-    // return formattedNumber.replace("Rp", "IDR").replace(".", ",");
-  };
 
   const handleInputChange = (field: any) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -141,10 +140,10 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
         sub_image2: cake.cake.sub_image2,
         variant_name_1: cake.variants[0].name,
         variant_desc_1: cake.variants[0].desc,
-        variant_price_1: cake?.variants[0].price,
+        variant_price_1: formatCurrency(cake.variants[0].price),
         variant_name_2: cake?.variants[1]?.name,
         variant_desc_2: cake?.variants[1]?.desc,
-        variant_price_2: cake?.variants[1]?.price ? cake?.variants[1]?.price : "",
+        variant_price_2: cake?.variants[1]?.price ? formatCurrency(cake?.variants[1]?.price) : "",
         about_cake_desc: cake.aboutCake.desc,
         allergen_desc: cake.aboutCake.allergen,
         ingredients_desc: cake.aboutCake.ingredients,
@@ -167,6 +166,12 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
       is_fruit_based: values.is_fruit_based === "true" ? true : false,
       is_nut_free: values.is_nut_free === "true" ? true : false,
       is_chocolate_based: values.is_chocolate_based === "true" ? true : false,
+      variant_price_1: formData.variant_price_1
+        ? formData.variant_price_1.replace(/[^\d]/g, "")
+        : "",
+      variant_price_2: formData.variant_price_2
+        ? formData.variant_price_2.replace(/[^\d]/g, "")
+        : "",
       main_image: image1 || values.main_image,
       sub_image1: image2 || values.sub_image1,
       sub_image2: image3 || values.sub_image2,
@@ -628,9 +633,8 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          defaultValue={field.value}
                           {...field}
-                          value={formData.variant_price_1}
+                          defaultValue={formatCurrency(formData.variant_price_1)}
                           onChange={handleInputChange(field)}
                         />
                       </FormControl>
@@ -672,9 +676,8 @@ const EditCakeForm = ({ setOpen, cakeId, refetch }: EditCakeProps) => {
                       <FormLabel className="font-bold">Variant price 2 (optional)</FormLabel>
                       <FormControl>
                         <Input
-                          defaultValue={field.value}
                           {...field}
-                          value={formData.variant_price_2}
+                          defaultValue={formatCurrency(formData.variant_price_2)}
                           onChange={handleInputChange(field)}
                         />
                       </FormControl>
